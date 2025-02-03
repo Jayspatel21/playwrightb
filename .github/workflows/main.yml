@@ -66,48 +66,121 @@ name: Playwright Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Cache Node Modules to speed up installations
-      - name: Cache Node Modules
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'  # Enable automatic npm caching
+
+      - name: Cache npm dependencies
+        id: cache-npm
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Install Dependencies
-      - name: Install Dependencies
-        run: npm ci --prefer-offline --no-audit
+      - name: Install npm dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: npm ci
 
-      # Cache Playwright Browsers
-      - name: Cache Playwright Browsers
+      - name: Cache Playwright browsers
+        id: cache-playwright
         uses: actions/cache@v3
         with:
-          path: ~/.cache/ms-playwright
-          key: Linux-playwright-${{ hashFiles('**/package-lock.json') }}
+          path: $HOME/.cache/ms-playwright  # Use $HOME instead of ~
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            Linux-playwright-
+            ${{ runner.os }}-playwright-
 
-      # Verify Cache Directory (Debugging Step)
-      - name: Debug Cache
-        run: ls -lah ~/.cache/ms-playwright || echo "Cache directory not found"
+      - name: Install Playwright browsers
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
 
-      # Install Playwright Browsers only if needed
-      - name: Install Playwright Browsers
-        run: npx playwright install
+  playwright-tests:
+    needs: setup  # Ensures setup job runs first
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # Adjust the number of shards as needed
+        shardTotal: [10]
+    steps:
+      - uses: actions/checkout@v4
 
-      # Run Playwright Tests
-      - name: Run Playwright Tests
-        run: npx playwright test
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Restore Playwright browsers cache
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Run Playwright tests
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+  merge-reports:
+    if: always()
+    needs: [playwright-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports
+          pattern: playwright-report-*
+          merge-multiple: true
+
+      - name: Merge reports
+        run: npx playwright merge-reports --reporter html reports
+
+      - name: Upload final HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-playwright-report
+          path: playwright-report
+          retention-days: 14
+
 
