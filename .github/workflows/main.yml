@@ -227,11 +227,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # Reduce to 10 shards
-        shardTotal: [10]  
-
-    env:
-      PLAYWRIGHT_WORKERS: 20  # Increase workers per shard
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # Reduce to 10 shards
+        shardTotal: [15]   # Increase workers per shard
 
     steps:
       - uses: actions/checkout@v4
