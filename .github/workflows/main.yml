@@ -188,7 +188,7 @@ on:
 
 jobs:
   setup:
-    runs-on: self-hosted
+    runs-on: [self-hosted, playwright-runner]
     steps:
       - uses: actions/checkout@v4
 
@@ -223,7 +223,7 @@ jobs:
   playwright-tests:
     needs: setup  # Wait for setup job to finish
     timeout-minutes: 60
-    runs-on: self-hosted
+    runs-on: [self-hosted, playwright-runner]
     strategy:
       fail-fast: false
       matrix:
@@ -278,7 +278,7 @@ jobs:
   merge-reports:
     if: always()
     needs: [playwright-tests]
-    runs-on: self-hosted
+    runs-on: [self-hosted, playwright-runner]
     steps:
       - uses: actions/checkout@v4
 
