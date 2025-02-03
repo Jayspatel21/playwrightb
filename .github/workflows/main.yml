@@ -93,7 +93,8 @@ jobs:
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Store Playwright Browsers Cache
+      - name: Cache Playwright browsers
+        id: cache-playwright
         uses: actions/cache@v3
         with:
           path: ~/.cache/ms-playwright
@@ -101,8 +102,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
+      - name: Install Playwright browsers
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
   playwright-tests:
-    needs: setup  # Wait for setup job to finish
+    needs: setup  # Ensure setup job completes first
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
