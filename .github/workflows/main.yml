@@ -227,8 +227,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]  # Define the shard index
-        shardTotal: [25]  # Define the total number of shards
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]  # Reduce to 10 shards
+        shardTotal: [20]  
+
+    env:
+      PLAYWRIGHT_WORKERS: 20  # Increase workers per shard
 
     steps:
       - uses: actions/checkout@v4
@@ -261,7 +264,7 @@ jobs:
 
       # Run Playwright tests with sharding (parallel execution)
       - name: Run Playwright tests (Shard ${{ matrix.shardIndex }} / ${{ matrix.shardTotal }})
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=$PLAYWRIGHT_WORKERS
 
       # Upload shard report to GitHub Actions Artifacts
       - name: Upload Shard Report
@@ -313,6 +316,7 @@ jobs:
           name: final-playwright-report
           path: playwright-report
           retention-days: 14
+
 
 
 
