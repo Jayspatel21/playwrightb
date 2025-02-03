@@ -71,9 +71,40 @@ on:
     branches: [ main, master ]
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Cache npm modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Store Playwright Browsers Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
   playwright-tests:
+    needs: setup  # Wait for setup job to finish
     timeout-minutes: 60
-    runs-on: ubuntu-latest  # GitHub-hosted runner
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -86,8 +117,7 @@ jobs:
         with:
           node-version: lts/*
 
-      # Cache the npm cache directory
-      - name: Cache npm modules
+      - name: Restore npm cache
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -96,7 +126,15 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Restore Playwright browsers cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -115,7 +153,7 @@ jobs:
   merge-reports:
     if: always()
     needs: [playwright-tests]
-    runs-on: ubuntu-latest  # GitHub-hosted runner
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -123,8 +161,7 @@ jobs:
         with:
           node-version: lts/*
 
-      # Cache npm modules to speed up dependency installation if needed
-      - name: Cache npm modules
+      - name: Restore npm cache
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -133,7 +170,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
