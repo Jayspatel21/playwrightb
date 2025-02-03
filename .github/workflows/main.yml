@@ -1,3 +1,67 @@
+# name: Playwright Tests
+
+# on:
+#   push:
+#     branches: [ main, master ]
+#   pull_request:
+#     branches: [ main, master ]
+
+# jobs:
+#   playwright-tests:
+#     timeout-minutes: 60
+#     runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         shardIndex: [1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
+#         shardTotal: [40]
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: lts/*
+#       - name: Install dependencies
+#         run: npm ci
+#       - name: Install Playwright browsers
+#         run: npx playwright install --with-deps
+#       - name: Run Playwright tests
+#         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+#       - name: Upload blob report to GitHub Actions Artifacts
+#         if: ${{ !cancelled() }}
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: blob-report-${{ matrix.shardIndex }}
+#           path: blob-report
+#           retention-days: 1
+
+#   merge-reports:
+#     # Merge reports after all shards complete, even if some failed
+#     if: always()
+#     needs: [playwright-tests]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: lts/*
+#       - name: Install dependencies
+#         run: npm ci
+#       - name: Download blob reports from GitHub Actions Artifacts
+#         uses: actions/download-artifact@v4
+#         with:
+#           path: all-blob-reports
+#           pattern: blob-report-*
+#           merge-multiple: true
+#       - name: Merge into HTML Report
+#         run: npx playwright merge-reports --reporter html ./all-blob-reports
+#       - name: Upload HTML report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: html-report-attempt-${{ github.run_attempt }}
+#           path: playwright-report
+#           retention-days: 14
+
+
 name: Playwright Tests
 
 on:
@@ -9,23 +73,37 @@ on:
 jobs:
   playwright-tests:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # GitHub-hosted runner
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
         shardTotal: [40]
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+
+      # Cache the npm cache directory
+      - name: Cache npm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm ci
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+
       - name: Run Playwright tests
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -35,25 +113,38 @@ jobs:
           retention-days: 1
 
   merge-reports:
-    # Merge reports after all shards complete, even if some failed
     if: always()
     needs: [playwright-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # GitHub-hosted runner
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+
+      # Cache npm modules to speed up dependency installation if needed
+      - name: Cache npm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm ci
+
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
           path: all-blob-reports
           pattern: blob-report-*
           merge-multiple: true
+
       - name: Merge into HTML Report
         run: npx playwright merge-reports --reporter html ./all-blob-reports
+
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
