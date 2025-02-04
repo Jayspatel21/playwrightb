@@ -252,7 +252,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install
 
       # - name: Set Playwright Workers
       #   run: echo "PLAYWRIGHT_WORKERS=6" >> $GITHUB_ENV  # Set workers to match CPU cores
