@@ -223,8 +223,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6]  # Reduce to 6 shards (matching CPU cores)
-        shardTotal: [6]  
+        shardIndex: [1, 2, 3, 4, 5]  # Reduce to 6 shards (matching CPU cores)
+        shardTotal: [5]  
 
     steps:
       - uses: actions/checkout@v4
