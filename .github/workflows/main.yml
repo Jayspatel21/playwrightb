@@ -184,19 +184,17 @@
 name: Playwright Tests
 
 on:
-  workflow_dispatch:  # Manual trigger (can also be triggered on push or PR)
+  workflow_dispatch:
 
 jobs:
   setup:
     runs-on: [self-hosted, playwright-runner]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
-      # Cache npm modules to avoid downloading dependencies every time
+      
       - name: Cache npm modules
         id: cache-npm
         uses: actions/cache@v3
@@ -206,12 +204,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Install dependencies only if cache miss
       - name: Install dependencies
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
-      # Cache Playwright Browsers to avoid reinstallation
       - name: Store Playwright Browsers Cache
         uses: actions/cache@v3
         with:
@@ -221,18 +217,17 @@ jobs:
             ${{ runner.os }}-playwright-
 
   playwright-tests:
-    needs: setup  # Wait for setup job to finish
+    needs: setup
     timeout-minutes: 60
     runs-on: [self-hosted, playwright-runner]
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # Reduce to 10 shards
-        shardTotal: [15]   # Increase workers per shard
+        shardIndex: [1, 2, 3, 4, 5, 6]  # Reduce to 6 shards (matching CPU cores)
+        shardTotal: [6]  
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -259,11 +254,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # Run Playwright tests with sharding (parallel execution)
+      - name: Set Playwright Workers
+        run: echo "PLAYWRIGHT_WORKERS=6" >> $GITHUB_ENV  # Set workers to match CPU cores
+
       - name: Run Playwright tests (Shard ${{ matrix.shardIndex }} / ${{ matrix.shardTotal }})
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=$PLAYWRIGHT_WORKERS
 
-      # Upload shard report to GitHub Actions Artifacts
       - name: Upload Shard Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -278,7 +274,6 @@ jobs:
     runs-on: [self-hosted, playwright-runner]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -294,7 +289,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
-      # Download all shard reports from GitHub Actions Artifacts
       - name: Download Shard Reports
         uses: actions/download-artifact@v4
         with:
@@ -302,17 +296,16 @@ jobs:
           pattern: shard-report-*
           merge-multiple: true
 
-      # Merge the downloaded reports into a single HTML report
       - name: Merge Reports into HTML
         run: npx playwright merge-reports --reporter html ./all-shard-reports
 
-      # Upload the final HTML report as artifact
       - name: Upload HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: final-playwright-report
           path: playwright-report
           retention-days: 14
+
 
 
 
