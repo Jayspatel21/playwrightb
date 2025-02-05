@@ -1,3 +1,31 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: playwright-tests
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: playwright-tests
+#   template:
+#     metadata:
+#       labels:
+#         app: playwright-tests
+#     spec:
+#       containers:
+#         - name: playwright
+#           image: jack2153/pw-1  # Ensure this image exists in the registry or Minikube's local Docker
+#           imagePullPolicy: IfNotPresent
+#           command: ["npx", "playwright", "test","example.spec.js"]
+#           workingDir: /app  # Optional: Specify if your Playwright tests are inside a specific directory
+#           resources:
+#             limits:
+#               memory: "3Gi"
+#               cpu: "1"
+#             requests:
+#               memory: "1Gi"
+#               cpu: "750m"
+        
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,28 +40,66 @@ spec:
       labels:
         app: playwright-tests
     spec:
+      volumes:
+        - name: test-results
+          persistentVolumeClaim:
+            claimName: test-results-pvc
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: playwright-pvc
       containers:
-        - name: playwright
-          image: jack2153/pw-1  # Ensure this image exists in the registry or Minikube's local Docker
-          imagePullPolicy: IfNotPresent
-          command: ["npx", "playwright", "test","example.spec.js"]
-          workingDir: /app  # Optional: Specify if your Playwright tests are inside a specific directory
-          resources:
-            limits:
-              memory: "3Gi"
-              cpu: "1"
-            requests:
-              memory: "1Gi"
-              cpu: "750m"
         - name: playwright-1
-          image: jack2153/pw-1  # Ensure this image exists in the registry or Minikube's local Docker
+          image: jack2153/pw-1
           imagePullPolicy: IfNotPresent
-          command: ["npx", "playwright", "test","example.spec2.js"]
-          workingDir: /app  # Optional: Specify if your Playwright tests are inside a specific directory
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test example.spec.js"]
+          workingDir: /app
+          volumeMounts:
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
           resources:
             limits:
               memory: "3Gi"
               cpu: "1"
             requests:
-              memory: "1Gi"
+              memory: "500Mi"
               cpu: "750m"
+        - name: playwright-2
+          image: jack2153/pw-1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test example2.spec.js"]
+          workingDir: /app
+          volumeMounts:
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+          resources:
+            limits:
+              memory: "3Gi"
+              cpu: "1"
+            requests:
+              memory: "500Mi"
+              cpu: "750m"
+        # - name: playwright-3
+        #   image: jack2153/pw-1
+        #   imagePullPolicy: IfNotPresent
+        #   command: ["/bin/sh", "-c"]
+        #   args: ["npx playwright test example.spec3.js"]
+        #   workingDir: /app
+        #   volumeMounts:
+        #     - name: test-results
+        #       mountPath: /app/test-results
+        #     - name: shared-data
+        #       mountPath: /app/shared
+        #   resources:
+        #     limits:
+        #       memory: "3Gi"
+        #       cpu: "1"
+        #     requests:
+        #       memory: "500Mi"
+        #       cpu: "500m"
+        
