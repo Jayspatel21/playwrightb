@@ -188,7 +188,7 @@ on:
 
 jobs:
   setup:
-    runs-on: ubuntu-22.04-8-cores
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -219,7 +219,7 @@ jobs:
   playwright-tests:
     needs: setup
     timeout-minutes: 60
-    runs-on: ubuntu-22.04-8-cores
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -271,8 +271,11 @@ jobs:
   merge-reports:
     if: always()
     needs: [playwright-tests]
-    runs-on: ubuntu-22.04-8-cores
+    runs-on: ubuntu-latest
+
+
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:

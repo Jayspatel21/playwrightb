@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: playwright-tests
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       app: playwright-tests
@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
         - name: playwright
-          image: jack2153/playwright-tests-1  # Ensure this image exists in the registry or Minikube's local Docker
+          image: jack2153/pw-1  # Ensure this image exists in the registry or Minikube's local Docker
           imagePullPolicy: IfNotPresent
-          command: ["npx", "playwright", "test"]
+          command: ["npx", "playwright", "test","example.spec.js"]
           workingDir: /app  # Optional: Specify if your Playwright tests are inside a specific directory
           resources:
             limits:
@@ -24,4 +24,16 @@ spec:
               cpu: "1"
             requests:
               memory: "1Gi"
-              cpu: "500m"
+              cpu: "750m"
+        - name: playwright-1
+          image: jack2153/pw-1  # Ensure this image exists in the registry or Minikube's local Docker
+          imagePullPolicy: IfNotPresent
+          command: ["npx", "playwright", "test","example.spec2.js"]
+          workingDir: /app  # Optional: Specify if your Playwright tests are inside a specific directory
+          resources:
+            limits:
+              memory: "3Gi"
+              cpu: "1"
+            requests:
+              memory: "1Gi"
+              cpu: "750m"

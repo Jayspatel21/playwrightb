@@ -29,4 +29,4 @@ RUN npm install --production
 COPY . .
 
 # Run Playwright tests by default
-CMD ["npx", "playwright", "test"]
+CMD ["npx", "playwright", "test", "example.spec.js"]
