@@ -65,7 +65,7 @@ spec:
               cpu: "1"
             requests:
               memory: "500Mi"
-              cpu: "500m"
+              cpu: "250m"
         - name: playwright-2
           image: jack2153/playwright-tests-1:latest
           imagePullPolicy: IfNotPresent
@@ -83,7 +83,7 @@ spec:
               cpu: "1"
             requests:
               memory: "500Mi"
-              cpu: "500m"
+              cpu: "250m"
         - name: playwright-3
           image: jack2153/playwright-tests-1:latest
           imagePullPolicy: IfNotPresent
@@ -101,5 +101,5 @@ spec:
               cpu: "1"
             requests:
               memory: "500Mi"
-              cpu: "500m"
+              cpu: "250m"
         
