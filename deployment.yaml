@@ -108,8 +108,8 @@ kind: Job
 metadata:
   name: playwright-tests
 spec:
-  parallelism: 10  # Run 50 pods at once
-  completions: 10   # Ensure 50 test files run exactly once
+  parallelism: 10  # Run 10 pods in parallel
+  completions: 10   # Run exactly 10 test files
   template:
     metadata:
       labels:
@@ -123,9 +123,14 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              test_file="example$((JOB_COMPLETION_INDEX + 1)).spec.js"
+              test_file="/app/tests/example$((JOB_COMPLETION_INDEX + 1)).spec.js"
               echo "Running: $test_file"
-              npx playwright test $test_file
+              if [ -f "$test_file" ]; then
+                npx playwright test "$test_file"
+              else
+                echo "Error: $test_file not found!"
+                exit 1
+              fi
           workingDir: /app
           resources:
             limits:
@@ -134,3 +139,4 @@ spec:
             requests:
               memory: "500Mi"
               cpu: "250m"
+
