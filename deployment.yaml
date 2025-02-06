@@ -109,7 +109,7 @@ metadata:
   name: playwright-tests
 spec:
   parallelism: 10
-  completions: 20
+  completions: 10
   template:
     metadata:
       labels:
@@ -132,5 +132,11 @@ spec:
                 exit 1
               fi
           workingDir: /app  # Ensure the correct working directory
-
+          resources:
+            requests:
+              memory: "500Mi"  # Request 500MB RAM
+              cpu: "500m"  # Request 0.5 CPU core
+            limits:
+              memory: "1Gi"  # Set max 1GB RAM
+              cpu: "1"  
 
