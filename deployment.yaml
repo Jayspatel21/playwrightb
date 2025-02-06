@@ -61,7 +61,7 @@ spec:
               mountPath: /app/shared
           resources:
             limits:
-              memory: "2Gi"
+              memory: "1Gi"
               cpu: "1"
             requests:
               memory: "500Mi"
@@ -79,27 +79,27 @@ spec:
               mountPath: /app/shared
           resources:
             limits:
-              memory: "2Gi"
+              memory: "1Gi"
               cpu: "1"
             requests:
               memory: "500Mi"
               cpu: "500m"
-        # - name: playwright-3
-        #   image: jack2153/pw-1
-        #   imagePullPolicy: IfNotPresent
-        #   command: ["/bin/sh", "-c"]
-        #   args: ["npx playwright test example.spec3.js"]
-        #   workingDir: /app
-        #   volumeMounts:
-        #     - name: test-results
-        #       mountPath: /app/test-results
-        #     - name: shared-data
-        #       mountPath: /app/shared
-        #   resources:
-        #     limits:
-        #       memory: "3Gi"
-        #       cpu: "1"
-        #     requests:
-        #       memory: "500Mi"
-        #       cpu: "500m"
+        - name: playwright-3
+          image: jack2153/playwright-tests-1:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test example3.spec.js"]
+          workingDir: /app
+          volumeMounts:
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
         
