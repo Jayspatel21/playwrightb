@@ -134,8 +134,8 @@ spec:
           workingDir: /app  # Ensure the correct working directory
           resources:
             requests:
-              memory: "500Mi"  # Request 500MB RAM
-              cpu: "500m"  # Request 0.5 CPU core
+              memory: "750Mi"  # Request 750MB RAM
+              cpu: "250m"  # Request 0.25 CPU core
             limits:
               memory: "1Gi"  # Set max 1GB RAM
               cpu: "1"  
