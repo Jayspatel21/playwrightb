@@ -118,7 +118,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: playwright
-          image: jack2153/playwright-tests-1:latest
+          image: jack2153/pw-2:latest
           imagePullPolicy: Always  # Force Kubernetes to pull the latest image
           command: ["/bin/sh", "-c"]
           args:
