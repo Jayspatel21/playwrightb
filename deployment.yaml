@@ -108,7 +108,7 @@ kind: Job
 metadata:
   name: playwright-tests
 spec:
-  parallelism: 20
+  parallelism: 10
   completions: 20
   template:
     metadata:
