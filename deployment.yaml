@@ -132,12 +132,5 @@ spec:
                 exit 1
               fi
           workingDir: /app  # Ensure the correct working directory
-          resources:
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-            requests:
-              memory: "500Mi"
-              cpu: "250m"
 
 
