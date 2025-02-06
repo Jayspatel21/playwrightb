@@ -26,39 +26,107 @@
 #               memory: "1Gi"
 #               cpu: "750m"
         
-apiVersion: apps/v1
-kind: Deployment
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: playwright-tests
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: playwright-tests
+#   template:
+#     metadata:
+#       labels:
+#         app: playwright-tests
+#     spec:
+#       volumes:
+#         - name: test-results
+#           persistentVolumeClaim:
+#             claimName: test-results-pvc
+#         - name: shared-data
+#           persistentVolumeClaim:
+#             claimName: playwright-pvc
+#       containers:
+#         - name: playwright-1
+#           image: jack2153/playwright-tests-1:latest
+#           imagePullPolicy: IfNotPresent
+#           command: ["/bin/sh", "-c"]
+#           args: ["npx playwright test example.spec.js"]
+#           workingDir: /app
+#           volumeMounts:
+#             - name: test-results
+#               mountPath: /app/test-results
+#             - name: shared-data
+#               mountPath: /app/shared
+#           resources:
+#             limits:
+#               memory: "1Gi"
+#               cpu: "1"
+#             requests:
+#               memory: "500Mi"
+#               cpu: "250m"
+#         - name: playwright-2
+#           image: jack2153/playwright-tests-1:latest
+#           imagePullPolicy: IfNotPresent
+#           command: ["/bin/sh", "-c"]
+#           args: ["npx playwright test example2.spec.js"]
+#           workingDir: /app
+#           volumeMounts:
+#             - name: test-results
+#               mountPath: /app/test-results
+#             - name: shared-data
+#               mountPath: /app/shared
+#           resources:
+#             limits:
+#               memory: "1Gi"
+#               cpu: "1"
+#             requests:
+#               memory: "500Mi"
+#               cpu: "250m"
+#         - name: playwright-3
+#           image: jack2153/playwright-tests-1:latest
+#           imagePullPolicy: IfNotPresent
+#           command: ["/bin/sh", "-c"]
+#           args: ["npx playwright test example3.spec.js"]
+#           workingDir: /app
+#           volumeMounts:
+#             - name: test-results
+#               mountPath: /app/test-results
+#             - name: shared-data
+#               mountPath: /app/shared
+#           resources:
+#             limits:
+#               memory: "1Gi"
+#               cpu: "1"
+#             requests:
+#               memory: "500Mi"
+#               cpu: "250m"
+
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: playwright-tests
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: playwright-tests
+  parallelism: 10  # Run 50 pods at once
+  completions: 10   # Ensure 50 test files run exactly once
   template:
     metadata:
       labels:
         app: playwright-tests
     spec:
-      volumes:
-        - name: test-results
-          persistentVolumeClaim:
-            claimName: test-results-pvc
-        - name: shared-data
-          persistentVolumeClaim:
-            claimName: playwright-pvc
+      restartPolicy: Never
       containers:
-        - name: playwright-1
+        - name: playwright
           image: jack2153/playwright-tests-1:latest
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
-          args: ["npx playwright test example.spec.js"]
+          args:
+            - |
+              test_file="example$((JOB_COMPLETION_INDEX + 1)).spec.js"
+              echo "Running: $test_file"
+              npx playwright test $test_file
           workingDir: /app
-          volumeMounts:
-            - name: test-results
-              mountPath: /app/test-results
-            - name: shared-data
-              mountPath: /app/shared
           resources:
             limits:
               memory: "1Gi"
@@ -66,40 +134,3 @@ spec:
             requests:
               memory: "500Mi"
               cpu: "250m"
-        - name: playwright-2
-          image: jack2153/playwright-tests-1:latest
-          imagePullPolicy: IfNotPresent
-          command: ["/bin/sh", "-c"]
-          args: ["npx playwright test example2.spec.js"]
-          workingDir: /app
-          volumeMounts:
-            - name: test-results
-              mountPath: /app/test-results
-            - name: shared-data
-              mountPath: /app/shared
-          resources:
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-            requests:
-              memory: "500Mi"
-              cpu: "250m"
-        - name: playwright-3
-          image: jack2153/playwright-tests-1:latest
-          imagePullPolicy: IfNotPresent
-          command: ["/bin/sh", "-c"]
-          args: ["npx playwright test example3.spec.js"]
-          workingDir: /app
-          volumeMounts:
-            - name: test-results
-              mountPath: /app/test-results
-            - name: shared-data
-              mountPath: /app/shared
-          resources:
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-            requests:
-              memory: "500Mi"
-              cpu: "250m"
-        
