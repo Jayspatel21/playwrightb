@@ -114,6 +114,8 @@ spec:
     metadata:
       labels:
         app: playwright-tests
+      annotations:
+        batch.kubernetes.io/job-completion-index: "0" # Default (will be overridden by Kubernetes)
     spec:
       restartPolicy: Never
       containers:
@@ -128,15 +130,15 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              echo "Pod completion index: $JOB_COMPLETION_INDEX"
               test_file="/app/tests/example$((JOB_COMPLETION_INDEX + 1)).spec.js"
-              echo "Running: $test_file"
+              echo "Running test: $test_file"
               if [ -f "$test_file" ]; then
                 npx playwright test "$test_file"
               else
                 echo "Error: $test_file not found!"
                 exit 1
               fi
-
           workingDir: /app  # Ensure the correct working directory
           resources:
             requests:
