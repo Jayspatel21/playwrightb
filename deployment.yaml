@@ -162,10 +162,10 @@ spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -173,28 +173,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example1.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-2
+spec:
+  template:
     metadata:
-      name: playwright-test-2
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-2
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -202,28 +202,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example2.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-3
+spec:
+  template:
     metadata:
-      name: playwright-test-3
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-3
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -231,28 +231,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example3.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-4
+spec:
+  template:
     metadata:
-      name: playwright-test-4
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-4
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -260,28 +260,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example4.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-5
+spec:
+  template:
     metadata:
-      name: playwright-test-5
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-5
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -289,28 +289,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example5.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-6
+spec:
+  template:
     metadata:
-      name: playwright-test-6
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-6
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -318,28 +318,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example6.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-7
+spec:
+  template:
     metadata:
-      name: playwright-test-7
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-7
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -347,28 +347,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example7.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-8
+spec:
+  template:
     metadata:
-      name: playwright-test-8
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-8
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -376,28 +376,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example8.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-9
+spec:
+  template:
     metadata:
-      name: playwright-test-9
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-9
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -405,28 +405,28 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example9.spec.js"]
           volumeMounts:
-        - name: test-results
-          mountPath: /app/test-results
-        - name: shared-data
-          mountPath: /app/shared
-    ---
-    apiVersion: batch/v1
-    kind: Job
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-10
+spec:
+  template:
     metadata:
-      name: playwright-test-10
-    spec:
-      template:
-        metadata:
       labels:
         app: playwright-test-10
-        spec:
+    spec:
       volumes:
         - name: test-results
           persistentVolumeClaim:
-        claimName: test-results-pvc
+            claimName: test-results-pvc
         - name: shared-data
           persistentVolumeClaim:
-        claimName: playwright-pvc
+            claimName: playwright-pvc
       restartPolicy: Never
       containers:
         - name: playwright
@@ -434,7 +434,65 @@ spec:
           command: ["/bin/sh", "-c"]
           args: ["npx playwright test /app/tests/example10.spec.js"]
           volumeMounts:
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-11
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-11
+    spec:
+      volumes:
         - name: test-results
-          mountPath: /app/test-results
+          persistentVolumeClaim:
+            claimName: test-results-pvc
         - name: shared-data
-          mountPath: /app/shared
+          persistentVolumeClaim:
+            claimName: playwright-pvc
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example11.spec.js"]
+          volumeMounts:
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-12
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-12
+    spec:
+      volumes:
+        - name: test-results
+          persistentVolumeClaim:
+            claimName: test-results-pvc
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: playwright-pvc
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example12.spec.js"]
+          volumeMounts:
+            - name: test-results
+              mountPath: /app/test-results
+            - name: shared-data
+              mountPath: /app/shared
