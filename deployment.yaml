@@ -118,7 +118,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: playwright
-          image: jack2153/pw-2:latest
+          image: jack2153/pw-3:latest
           imagePullPolicy: Always  # Force Kubernetes to pull the latest image
           command: ["/bin/sh", "-c"]
           args:
@@ -135,7 +135,7 @@ spec:
           resources:
             requests:
               memory: "750Mi"  # Request 750MB RAM
-              cpu: "250m"  # Request 0.25 CPU core
+              cpu: "300m"  # Request 0.25 CPU core
             limits:
               memory: "1Gi"  # Set max 1GB RAM
               cpu: "1"  
