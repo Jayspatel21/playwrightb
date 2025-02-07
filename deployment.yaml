@@ -119,7 +119,12 @@ spec:
       containers:
         - name: playwright
           image: jack2153/pw-3:latest
-          imagePullPolicy: Always  # Force Kubernetes to pull the latest image
+          imagePullPolicy: Always
+          env:
+            - name: JOB_COMPLETION_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -131,6 +136,7 @@ spec:
                 echo "Error: $test_file not found!"
                 exit 1
               fi
+
           workingDir: /app  # Ensure the correct working directory
           resources:
             requests:
