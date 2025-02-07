@@ -103,48 +103,228 @@
 #               memory: "500Mi"
 #               cpu: "250m"
 
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: playwright-tests
+# spec:
+#   parallelism: 10
+#   completions: 10
+#   template:
+#     metadata:
+#       labels:
+#         app: playwright-tests
+#       annotations:
+#         batch.kubernetes.io/job-completion-index: "0" # Default (will be overridden by Kubernetes)
+#     spec:
+#       restartPolicy: Never
+#       containers:
+#         - name: playwright
+#           image: jack2153/pw-3:latest
+#           imagePullPolicy: Always
+#           env:
+#             - name: JOB_COMPLETION_INDEX
+#               valueFrom:
+#                 fieldRef:
+#                   fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
+#           command: ["/bin/sh", "-c"]
+#           args:
+#             - |
+#               echo "Pod completion index: $JOB_COMPLETION_INDEX"
+#               test_file="/app/tests/example$((JOB_COMPLETION_INDEX + 1)).spec.js"
+#               echo "Running test: $test_file"
+#               if [ -f "$test_file" ]; then
+#                 npx playwright test "$test_file"
+#               else
+#                 echo "Error: $test_file not found!"
+#                 exit 1
+#               fi
+#           workingDir: /app  # Ensure the correct working directory
+#           resources:
+#             requests:
+#               memory: "750Mi"  # Request 750MB RAM
+#               cpu: "300m"  # Request 0.25 CPU core
+#             limits:
+#               memory: "1Gi"  # Set max 1GB RAM
+#               cpu: "1"  
+
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: playwright-tests
+  name: playwright-test-1
 spec:
-  parallelism: 10
-  completions: 10
   template:
     metadata:
       labels:
-        app: playwright-tests
-      annotations:
-        batch.kubernetes.io/job-completion-index: "0" # Default (will be overridden by Kubernetes)
+        app: playwright-test-1
     spec:
       restartPolicy: Never
       containers:
         - name: playwright
           image: jack2153/pw-3:latest
-          imagePullPolicy: Always
-          env:
-            - name: JOB_COMPLETION_INDEX
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
           command: ["/bin/sh", "-c"]
-          args:
-            - |
-              echo "Pod completion index: $JOB_COMPLETION_INDEX"
-              test_file="/app/tests/example$((JOB_COMPLETION_INDEX + 1)).spec.js"
-              echo "Running test: $test_file"
-              if [ -f "$test_file" ]; then
-                npx playwright test "$test_file"
-              else
-                echo "Error: $test_file not found!"
-                exit 1
-              fi
-          workingDir: /app  # Ensure the correct working directory
-          resources:
-            requests:
-              memory: "750Mi"  # Request 750MB RAM
-              cpu: "300m"  # Request 0.25 CPU core
-            limits:
-              memory: "1Gi"  # Set max 1GB RAM
-              cpu: "1"  
-
+          args: ["npx playwright test /app/tests/example1.spec.js"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-2
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-2
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example2.spec.js"]
+---
+# Repeat for test 3 to 10
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-3
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-3
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example3.spec.js"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-4
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-4
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example4.spec.js"]
+---
+# Repeat for test 3 to 10
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-5
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-5
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example5.spec.js"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-6
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-6
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example6.spec.js"]
+---
+# Repeat for test 3 to 10
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-7
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-7
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example7.spec.js"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-8
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-8
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example8.spec.js"]
+---
+# Repeat for test 3 to 10
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-9
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-9
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example9.spec.js"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playwright-test-10
+spec:
+  template:
+    metadata:
+      labels:
+        app: playwright-test-10
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: playwright
+          image: jack2153/pw-3:latest
+          command: ["/bin/sh", "-c"]
+          args: ["npx playwright test /app/tests/example10.spec.js"]
+---
+# Repeat for test 3 to 10
